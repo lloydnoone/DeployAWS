@@ -7,6 +7,7 @@ const router = require('./config/router')
 const logger = require('./lib/logger')
 const errorHandler = require('./lib/errorHandler')
 const { dbURI, port } = require('./config/environment')
+const path = require('path')
 
 //connect to db
 mongoose.connect(
@@ -15,7 +16,9 @@ mongoose.connect(
   () => console.log('connected to DB')
 )
 
-app.use(express.static(`${__dirname}/dist`))
+console.log('__dirname: ', __dirname + '/../client/dist')
+
+app.use(express.static(`${__dirname}/../client/dist`))
 
 app.use(bodyParser.json())
 
@@ -23,7 +26,9 @@ app.use(logger)
 
 app.use('/api', router)
 
-app.get('/*', (req, res) => res.status(404).json({ message: 'Not Found' }))
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '..', 'client', 'dist', 'index.html'));
+})
 
 app.use(errorHandler)
 
